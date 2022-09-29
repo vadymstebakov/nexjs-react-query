@@ -15,7 +15,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        cacheTime: 3000,
+        staleTime: 10000,
+      },
+    },
+  });
 
   await queryClient.prefetchQuery(getQueryKey(id), getPhotoApi);
 
@@ -30,7 +37,8 @@ const PokemonPage = () => {
   const router = useRouter();
   const id = typeof router.query?.id === 'string' ? router.query.id : '';
   const { data: photo } = useQuery(getQueryKey(id), getPhotoApi, {
-    refetchOnMount: false,
+    cacheTime: 3000,
+    staleTime: 10000,
     refetchOnWindowFocus: false,
   });
 

@@ -5,14 +5,16 @@ import Cards from '../components/Cards';
 import styles from '../styles/Home.module.css';
 
 export async function getServerSideProps() {
-  const queryClient = new QueryClient();
-
-  queryClient.setDefaultOptions({
-    queries: {
-      cacheTime: 1000,
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        cacheTime: 3000,
+        staleTime: 10000,
+      },
     },
   });
-  await queryClient.prefetchQuery(getQueryKey(), getPhotosApi, { cacheTime: 1000 });
+
+  await queryClient.prefetchQuery(getQueryKey(), getPhotosApi);
 
   return {
     props: {
@@ -23,8 +25,8 @@ export async function getServerSideProps() {
 
 const Home = () => {
   const { data: photos } = useQuery(getQueryKey(), getPhotosApi, {
-    cacheTime: 1000,
-    refetchOnMount: false,
+    cacheTime: 3000,
+    staleTime: 10000,
     refetchOnWindowFocus: false,
   });
   const [isLoading, startTransition] = useTransition();
